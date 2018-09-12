@@ -1,26 +1,7 @@
-# react-motion-components
-
-> components using react &amp; react-motion
-
-[![NPM](https://img.shields.io/npm/v/react-motion-components.svg)](https://www.npmjs.com/package/react-motion-components) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
-## Install
-
-```bash
-npm install --save react-motion-components
-```
-
-## Usage
-
-### Carousel
-
-[demo](https://codesandbox.io/s/v0p43q2wy)
-
-```tsx
 import React, { Component } from 'react';
 import { Carousel } from 'react-motion-components';
 
-export default class CarouselSample extends Component {
+class CarouselSample extends Component {
   render() {
     const defaultStyle = {
       width: 300,
@@ -72,8 +53,5 @@ export default class CarouselSample extends Component {
     );
   }
 }
-```
 
-## License
-
-MIT © [pjb0811](https://github.com/pjb0811)
+export default CarouselSample;

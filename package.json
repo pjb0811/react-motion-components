@@ -1,7 +1,7 @@
 {
   "name": "react-motion-components",
   "version": "1.0.1",
-  "description": "",
+  "description": "components using react & react-motion",
   "author": "pjb0811",
   "license": "MIT",
   "repository": "pjb0811/react-motion-components",
@@ -21,7 +21,10 @@
     "predeploy": "cd example && yarn install && yarn run build",
     "deploy": "gh-pages -d example/build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@types/react-motion": "^0.0.27",
+    "react-motion": "^0.5.2"
+  },
   "peerDependencies": {
     "prop-types": "^15.5.4",
     "react": "^15.0.0 || ^16.0.0",
