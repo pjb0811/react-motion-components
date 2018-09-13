@@ -152,6 +152,41 @@ class App extends Component {
 }
 ```
 
+### StaggeredList
+
+[demo](https://codesandbox.io/s/4z4vlorp87)
+
+```tsx
+import React, { Component } from 'react';
+import { StaggeredList } from 'react-motion-components';
+
+class App extends Component {
+  render() {
+    const defaultStyle = {
+      width: 200,
+      height: 200
+    };
+
+    return (
+      <div>
+        <h1>StaggeredList</h1>
+        <div
+          style={{
+            ...defaultStyle
+          }}
+        >
+          <StaggeredList>
+            <div style={{ ...defaultStyle, background: 'green' }} />
+            <div style={{ ...defaultStyle, background: 'red' }} />
+            <div style={{ ...defaultStyle, background: 'blue' }} />
+          </StaggeredList>
+        </div>
+      </div>
+    );
+  }
+}
+```
+
 ## License
 
 MIT © [pjb0811](https://github.com/pjb0811)
