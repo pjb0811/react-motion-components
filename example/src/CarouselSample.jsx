@@ -19,11 +19,10 @@ class CarouselSample extends Component {
 
     return (
       <div>
-        <h1 style={{ textAlign: 'center' }}>1. Carousel</h1>
+        <h1>Carousel</h1>
         <div
           style={{
-            ...defaultStyle,
-            margin: '0 auto'
+            ...defaultStyle
           }}
         >
           <Carousel
