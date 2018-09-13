@@ -9,7 +9,11 @@
     "react",
     "react-motion",
     "3d",
-    "carousel"
+    "carousel",
+    "cube",
+    "draggable",
+    "staggered",
+    "window"
   ],
   "main": "dist/index.js",
   "module": "dist/index.es.js",
