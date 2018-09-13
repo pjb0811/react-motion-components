@@ -76,7 +76,7 @@ export default class CarouselSample extends Component {
 
 ### Cube
 
-[demo](https://codesandbox.io/s/x7jv6oj8lo)
+[demo](https://codesandbox.io/s/x3l8xzv0w4)
 
 ```tsx
 import React, { Component } from 'react';
