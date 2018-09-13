@@ -154,7 +154,7 @@ class App extends Component {
 
 ### StaggeredList
 
-[demo](https://codesandbox.io/s/4z4vlorp87)
+[demo](https://codesandbox.io/s/myzz5qx1jj)
 
 ```tsx
 import React, { Component } from 'react';
