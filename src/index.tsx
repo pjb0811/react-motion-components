@@ -1,3 +1,4 @@
 import Carousel from './Carousel';
+import Cube from './Cube';
 
-export { Carousel };
+export { Carousel, Cube };

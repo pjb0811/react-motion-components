@@ -14,7 +14,7 @@ npm install --save react-motion-components
 
 ### Carousel
 
-[demo](https://codesandbox.io/s/v0p43q2wy)
+[demo](https://codesandbox.io/s/x7jv6oj8lo)
 
 ```tsx
 import React, { Component } from 'react';
@@ -67,6 +67,37 @@ export default class CarouselSample extends Component {
               4
             </div>
           </Carousel>
+        </div>
+      </div>
+    );
+  }
+}
+```
+
+### Cube
+
+[demo](https://codesandbox.io/s/x7jv6oj8lo)
+
+```tsx
+import React, { Component } from 'react';
+import { Cube } from 'react-motion-components';
+
+class App extends Component {
+  render() {
+    const defaultStyle = {
+      width: 300,
+      height: 300
+    };
+
+    return (
+      <div>
+        <h1>Cube</h1>
+        <div
+          style={{
+            ...defaultStyle
+          }}
+        >
+          <Cube size={300} index="front" />
         </div>
       </div>
     );
