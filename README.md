@@ -189,7 +189,7 @@ class App extends Component {
 
 ### Window
 
-[demo](https://codesandbox.io/s/myzz5qx1jj)
+[demo](https://codesandbox.io/s/jv3nyzl8nw)
 
 ```tsx
 import React, { Component } from 'react';
