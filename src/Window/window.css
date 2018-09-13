@@ -1,0 +1,97 @@
+.window-wrapper {
+  position: fixed;
+  z-index: 9999;
+  margin: auto;
+}
+
+.window-wrapper.top {
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.window-wrapper.left {
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.window-wrapper.right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.window-wrapper.center {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.window-wrapper.bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.window-wrapper .window {
+  position: absolute;
+}
+
+.window-wrapper .resizable {
+  position: absolute;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.window-wrapper .resizable li {
+  margin: 0 !important;
+  padding: 0 !important;
+  float: inherit;
+}
+
+.window-wrapper .resizable .ns {
+  cursor: ns-resize;
+}
+
+.window-wrapper .resizable .ew {
+  cursor: ew-resize;
+}
+
+.window-wrapper .resizable .nwse {
+  cursor: nwse-resize;
+}
+
+.window-wrapper .resizable .nesw {
+  cursor: nesw-resize;
+}
+
+.window-wrapper .titlebar {
+  background: whitesmoke;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.window-wrapper .titlebar h4 {
+  flex-grow: 1;
+  margin: 0;
+}
+
+.window-wrapper .titlebar button {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+}
+
+.window-wrapper .titlebar button.resize {
+  background: green;
+}
+
+.window-wrapper .titlebar button.close {
+  background: red;
+}

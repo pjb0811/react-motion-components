@@ -187,6 +187,64 @@ class App extends Component {
 }
 ```
 
+### Window
+
+[demo](https://codesandbox.io/s/myzz5qx1jj)
+
+```tsx
+import React, { Component } from 'react';
+import { Window } from 'react-motion-components';
+
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <div>
+          <button
+            onClick={() => {
+              this.window.addWindow();
+            }}
+          >
+            add window
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              this.window.removeWindow();
+            }}
+          >
+            remove window
+          </button>
+        </div>
+        <Window
+          ref={window => (this.window = window)}
+          width={300}
+          height={300}
+          position="right"
+          direction="left"
+          titlebar={{
+            use: true,
+            height: 50
+          }}
+          resize={true}
+        >
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
+            test
+          </div>
+        </Window>
+      </div>
+    );
+  }
+}
+```
+
 ## License
 
 MIT © [pjb0811](https://github.com/pjb0811)
