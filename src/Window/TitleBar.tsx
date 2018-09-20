@@ -10,7 +10,7 @@ type Props = {
   };
   width: number;
   isFulling: () => boolean;
-  toggleWindowSize: () => void;
+  toggleWindowSize: (params?: any) => void;
   handleMouseDown: (e: React.MouseEvent<any>) => void;
   removeWindow: () => void;
 };

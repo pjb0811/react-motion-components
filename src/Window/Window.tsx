@@ -174,10 +174,16 @@ class Window extends React.Component<Props, State> {
     });
   };
 
-  toggleWindowSize = () => {
+  toggleWindowSize = (params: { direction: string }) => {
+    const { direction } = params;
     const { innerWidth, innerHeight } = window;
     const { width, height, wrapper, cells, cell } = this.state;
     const [currentCell]: Array<{ top: number; left: number }> = cells;
+
+    if (direction) {
+      console.log(direction);
+      return;
+    }
 
     this.setState({
       wrapper: {
@@ -269,10 +275,19 @@ class Window extends React.Component<Props, State> {
   handleMouseMove = (e: any) => {
     const { pageX, pageY } = e;
     const { wrapper } = this.state;
+    const { innerWidth, innerHeight } = window;
     const {
       isPressed,
       mouseXY: [mx, my]
     } = wrapper;
+
+    if (pageX < 0 || pageY < 0) {
+      return;
+    }
+
+    if (pageX > innerWidth || pageY > innerHeight) {
+      return;
+    }
 
     if (isPressed) {
       this.setState({
@@ -283,6 +298,7 @@ class Window extends React.Component<Props, State> {
           isMoved: true
         }
       });
+
       this.dragWindow();
     }
   };
@@ -359,12 +375,12 @@ class Window extends React.Component<Props, State> {
         }
       });
 
-      this.resizableWindow();
+      this.resizableWindow(e);
     }
   };
 
-  resizableWindow = () => {
-    const { resizable } = this.state;
+  resizableWindow = (_e: any) => {
+    const { resizable, wrapper } = this.state;
     const {
       shiftXY,
       mouseXY,
@@ -377,6 +393,7 @@ class Window extends React.Component<Props, State> {
     const [mx, my] = mouseXY;
     const [sx, sy] = shiftXY;
     const [dx, dy] = mouseDelta;
+    const { width, height } = wrapper;
 
     let resizeTop = position.top;
     let resizeLeft = position.left;
@@ -420,6 +437,14 @@ class Window extends React.Component<Props, State> {
         break;
     }
 
+    if (width > width - (resizeLeft - resizeRight)) {
+      return;
+    }
+
+    if (height > height - (resizeTop - resizeBottom)) {
+      return;
+    }
+
     this.setState({
       resizable: {
         ...resizable,
@@ -447,6 +472,11 @@ class Window extends React.Component<Props, State> {
         }
       });
     }
+  };
+
+  resizableDoubleClick = (params: { direction: string }) => {
+    const { direction } = params;
+    this.toggleWindowSize({ direction });
   };
 
   render() {
@@ -483,17 +513,17 @@ class Window extends React.Component<Props, State> {
                 visibility: wrapper.show ? 'visible' : 'hidden'
               }}
             >
-              {resize && (
-                <Resizable
-                  width={wrapper.width}
-                  height={wrapper.height}
-                  cells={this.state.cells}
-                  resizable={resizable}
-                  resizableMouseDown={this.resizableMouseDown}
-                  resizableMouseMove={this.resizableMouseMove}
-                  resizableMouseUp={this.resizableMouseUp}
-                />
-              )}
+              <Resizable
+                width={wrapper.width}
+                height={wrapper.height}
+                cells={this.state.cells}
+                resize={resize}
+                resizable={resizable}
+                resizableMouseDown={this.resizableMouseDown}
+                resizableMouseMove={this.resizableMouseMove}
+                resizableMouseUp={this.resizableMouseUp}
+                resizableDoubleClick={this.resizableDoubleClick}
+              />
               <TransitionMotion
                 willEnter={this.willEnter}
                 willLeave={this.willLeave}

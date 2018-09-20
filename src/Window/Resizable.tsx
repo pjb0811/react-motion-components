@@ -5,6 +5,7 @@ type Props = {
   width: number;
   height: number;
   cells: Array<{ top: number; left: number }>;
+  resize: boolean;
   resizable: {
     type: string;
     mouseXY: Array<number>;
@@ -19,6 +20,7 @@ type Props = {
   ) => void;
   resizableMouseMove: (e: any) => void;
   resizableMouseUp: () => void;
+  resizableDoubleClick: (params: { direction: string }) => void;
 };
 
 class Resizable extends React.Component<Props> {
@@ -33,11 +35,23 @@ class Resizable extends React.Component<Props> {
   }
 
   render() {
-    const { width, height, cells, resizable, resizableMouseDown } = this.props;
+    const {
+      width,
+      height,
+      cells,
+      resize,
+      resizable,
+      resizableMouseDown,
+      resizableDoubleClick
+    } = this.props;
     const { position } = resizable;
     const [cell = { top: 0, left: 0 }] = cells;
     const { top, left } = cell;
     const { size } = this.state;
+
+    if (!resize) {
+      return null;
+    }
 
     return (
       <ul
@@ -58,6 +72,9 @@ class Resizable extends React.Component<Props> {
           onMouseDown={e => {
             resizableMouseDown({ e, type: 'leftTop' });
           }}
+          onDoubleClick={() => {
+            resizableDoubleClick({ direction: 'leftTop' });
+          }}
         />
         <li
           className={styles.ns}
@@ -67,6 +84,9 @@ class Resizable extends React.Component<Props> {
           }}
           onMouseDown={e => {
             resizableMouseDown({ e, type: 'top' });
+          }}
+          onDoubleClick={() => {
+            resizableDoubleClick({ direction: 'top' });
           }}
         />
         <li
@@ -78,6 +98,9 @@ class Resizable extends React.Component<Props> {
           onMouseDown={e => {
             resizableMouseDown({ e, type: 'rightTop' });
           }}
+          onDoubleClick={() => {
+            resizableDoubleClick({ direction: 'rightTop' });
+          }}
         />
         <li
           className={styles.ew}
@@ -87,6 +110,9 @@ class Resizable extends React.Component<Props> {
           }}
           onMouseDown={e => {
             resizableMouseDown({ e, type: 'left' });
+          }}
+          onDoubleClick={() => {
+            resizableDoubleClick({ direction: 'left' });
           }}
         />
         <li
@@ -104,6 +130,9 @@ class Resizable extends React.Component<Props> {
           onMouseDown={e => {
             resizableMouseDown({ e, type: 'right' });
           }}
+          onDoubleClick={() => {
+            resizableDoubleClick({ direction: 'right' });
+          }}
         />
         <li
           className={styles.nesw}
@@ -113,6 +142,9 @@ class Resizable extends React.Component<Props> {
           }}
           onMouseDown={e => {
             resizableMouseDown({ e, type: 'leftBottom' });
+          }}
+          onDoubleClick={() => {
+            resizableDoubleClick({ direction: 'leftBottom' });
           }}
         />
         <li
@@ -124,6 +156,9 @@ class Resizable extends React.Component<Props> {
           onMouseDown={e => {
             resizableMouseDown({ e, type: 'bottom' });
           }}
+          onDoubleClick={() => {
+            resizableDoubleClick({ direction: 'bottom' });
+          }}
         />
         <li
           className={styles.nwse}
@@ -133,6 +168,9 @@ class Resizable extends React.Component<Props> {
           }}
           onMouseDown={e => {
             resizableMouseDown({ e, type: 'rightBottom' });
+          }}
+          onDoubleClick={() => {
+            resizableDoubleClick({ direction: 'rightBottom' });
           }}
         />
       </ul>
