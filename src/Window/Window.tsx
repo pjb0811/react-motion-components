@@ -127,6 +127,7 @@ class Window extends React.Component<Props, State> {
 
     window.addEventListener('mousemove', this.handleMouseMove);
     window.addEventListener('mouseup', this.handleMouseUp);
+    window.addEventListener('resize', this.updateWrapperSize);
 
     this.setState(prevState => {
       return {
@@ -144,6 +145,26 @@ class Window extends React.Component<Props, State> {
       };
     });
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWrapperSize);
+  }
+
+  updateWrapperSize = () => {
+    const { wrapper } = this.state;
+    const { isFull } = wrapper;
+    const { innerWidth, innerHeight } = window;
+
+    if (isFull) {
+      this.setState({
+        wrapper: {
+          ...wrapper,
+          width: innerWidth,
+          height: innerHeight
+        }
+      });
+    }
+  };
 
   isShowing = () => {
     return this.state.wrapper.show;
