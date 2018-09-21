@@ -278,13 +278,8 @@ class Window extends React.Component<Props, State> {
     const { innerWidth, innerHeight } = window;
     const {
       isPressed,
-      mouseXY: [mx, my],
-      isFull
+      mouseXY: [mx, my]
     } = wrapper;
-
-    if (isFull) {
-      return;
-    }
 
     if (pageX < 0 || pageY < 0) {
       return;
@@ -385,7 +380,7 @@ class Window extends React.Component<Props, State> {
   };
 
   resizableWindow = (_e: any) => {
-    const { resizable } = this.state;
+    const { resizable, wrapper, width, height } = this.state;
     const {
       shiftXY,
       mouseXY,
@@ -441,14 +436,13 @@ class Window extends React.Component<Props, State> {
         break;
     }
 
-    // const { wrapper, width, height } = this.state;
-    // if (width > wrapper.width - (resizeLeft - resizeRight)) {
-    //   return;
-    // }
+    if (width > wrapper.width - (resizeLeft - resizeRight)) {
+      return;
+    }
 
-    // if (height > wrapper.height - (resizeTop - resizeBottom)) {
-    //   return;
-    // }
+    if (height > wrapper.height - (resizeTop - resizeBottom)) {
+      return;
+    }
 
     this.setState({
       resizable: {
