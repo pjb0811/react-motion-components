@@ -201,16 +201,10 @@ class Window extends React.Component<Props, State> {
     });
   };
 
-  toggleWindowSize = (params: { direction: string }) => {
-    const { direction } = params;
+  toggleWindowSize = () => {
     const { innerWidth, innerHeight } = window;
-    const { width, height, wrapper, cells, cell } = this.state;
+    const { width, height, wrapper, cells, cell, resizable } = this.state;
     const [currentCell]: Array<{ top: number; left: number }> = cells;
-
-    if (direction) {
-      console.log(direction);
-      return;
-    }
 
     this.setState({
       wrapper: {
@@ -218,6 +212,9 @@ class Window extends React.Component<Props, State> {
         isFull: !wrapper.isFull,
         width: wrapper.isFull ? width : innerWidth,
         height: wrapper.isFull ? height : innerHeight
+      },
+      resizable: {
+        ...resizable
       },
       cell: {
         ...cell,
@@ -514,9 +511,26 @@ class Window extends React.Component<Props, State> {
     }
   };
 
-  resizableDoubleClick = (params: { direction: string }) => {
-    const { direction } = params;
-    this.toggleWindowSize({ direction });
+  resizableDoubleClick = (params: { e: any; direction: string }) => {
+    const { e, direction } = params;
+    this.stickyWindow({ e, direction });
+  };
+
+  stickyWindow = (params: { e: any; direction: string }) => {
+    const { e, direction } = params;
+    console.log(e, direction);
+    switch (direction) {
+      case 'top':
+        break;
+      case 'left':
+        break;
+      case 'right':
+        break;
+      case 'bottom':
+        break;
+      default:
+        break;
+    }
   };
 
   render() {
