@@ -4,6 +4,7 @@ import Resizable from './Resizable';
 import TitleBar from './TitleBar';
 import Contents from './Contents';
 import styles from './window.css';
+const lodash = require('lodash');
 
 type Props = {
   width: number;
@@ -127,7 +128,12 @@ class Window extends React.Component<Props, State> {
 
     window.addEventListener('mousemove', this.handleMouseMove);
     window.addEventListener('mouseup', this.handleMouseUp);
-    window.addEventListener('resize', this.updateWrapperSize);
+    window.addEventListener(
+      'resize',
+      lodash.debounce(() => {
+        this.updateWrapperSize();
+      }, 100)
+    );
 
     this.setState(prevState => {
       return {
