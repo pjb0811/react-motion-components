@@ -305,8 +305,13 @@ class Window extends React.Component<Props, State> {
     const { innerWidth, innerHeight } = window;
     const {
       isPressed,
-      mouseXY: [mx, my]
+      mouseXY: [mx, my],
+      isFull
     } = wrapper;
+
+    if (isFull) {
+      return;
+    }
 
     if (pageX < 0 || pageY < 0) {
       return;
@@ -392,6 +397,15 @@ class Window extends React.Component<Props, State> {
     const { pageX, pageY } = e;
     const { resizable } = this.state;
     const { isPressed } = resizable;
+    const { innerWidth, innerHeight } = window;
+
+    if (pageX < 0 || pageY < 0) {
+      return;
+    }
+
+    if (pageX > innerWidth || pageY > innerHeight) {
+      return;
+    }
 
     if (isPressed) {
       this.setState({
@@ -508,6 +522,25 @@ class Window extends React.Component<Props, State> {
   render() {
     const { position, children, resize = false } = this.props;
     const { titlebar, wrapper, resizable } = this.state;
+    const resizeCells = this.state.cells.map(
+      (cell: { top: number; left: number }) => {
+        const { top, left } = cell;
+        if (wrapper.isFull) {
+          return {
+            top: top - resizable.position.top,
+            left: left - resizable.position.left
+          };
+        }
+        return { top, left };
+      }
+    );
+
+    const resizeWidth = wrapper.isFull
+      ? wrapper.width + (resizable.position.left - resizable.position.right)
+      : wrapper.width;
+    const resizeHeight = wrapper.isFull
+      ? wrapper.height + (resizable.position.top - resizable.position.bottom)
+      : wrapper.height;
 
     return (
       <Motion
@@ -540,9 +573,9 @@ class Window extends React.Component<Props, State> {
               }}
             >
               <Resizable
-                width={wrapper.width}
-                height={wrapper.height}
-                cells={this.state.cells}
+                width={resizeWidth}
+                height={resizeHeight}
+                cells={resizeCells}
                 resize={resize}
                 resizable={resizable}
                 resizableMouseDown={this.resizableMouseDown}

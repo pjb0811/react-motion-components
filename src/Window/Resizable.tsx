@@ -57,10 +57,10 @@ class Resizable extends React.Component<Props> {
       <ul
         className={styles.resizable}
         style={{
-          width: width + size - position.left + position.right,
-          height: height + size - position.top + position.bottom,
           top: top + position.top + -size / 2,
-          left: left + position.left + -size / 2
+          left: left + position.left + -size / 2,
+          width: width + size - position.left + position.right,
+          height: height + size - position.top + position.bottom
         }}
       >
         <li
