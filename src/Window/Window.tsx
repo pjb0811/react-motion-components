@@ -518,29 +518,46 @@ class Window extends React.Component<Props, State> {
 
   stickyWindow = (params: { e: any; direction: string }) => {
     const { e, direction } = params;
-    const { innerWidth, innerHeight } = window;
     const { resizable } = this.state;
     const { position } = resizable;
+    const { innerWidth, innerHeight } = window;
     const rectTop = e.target.getBoundingClientRect().top;
     const rectLeft = e.target.getBoundingClientRect().left;
 
-    let stickyTop = 0;
-    console.debug(innerWidth, rectTop, innerHeight, rectLeft);
+    let stickyTop = position.top;
+    let stickyLeft = position.left;
+    let stickyRight = position.right;
+    let stickyBottom = position.bottom;
 
     switch (direction) {
       case 'top':
-        stickyTop = -rectTop + position.top;
-        console.log(stickyTop);
+        stickyTop += -rectTop - 5;
         break;
       case 'left':
+        stickyLeft += -rectLeft - 5;
         break;
       case 'right':
+        stickyRight += innerWidth - rectLeft;
         break;
       case 'bottom':
+        stickyBottom += innerHeight - rectTop;
         break;
       default:
         break;
     }
+
+    this.setState({
+      resizable: {
+        ...resizable,
+        position: {
+          ...resizable.position,
+          top: stickyTop,
+          left: stickyLeft,
+          right: stickyRight,
+          bottom: stickyBottom
+        }
+      }
+    });
   };
 
   render() {
