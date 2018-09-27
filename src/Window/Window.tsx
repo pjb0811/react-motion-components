@@ -299,7 +299,7 @@ class Window extends React.Component<Props, State> {
   handleMouseMove = (e: any) => {
     const { pageX, pageY } = e;
     const { wrapper } = this.state;
-    const { innerWidth, innerHeight } = window;
+    // const { innerWidth, innerHeight } = window;
     const {
       isPressed,
       mouseXY: [mx, my],
@@ -310,13 +310,13 @@ class Window extends React.Component<Props, State> {
       return;
     }
 
-    if (pageX < 0 || pageY < 0) {
-      return;
-    }
+    // if (pageX < 0 || pageY < 0) {
+    //   return;
+    // }
 
-    if (pageX > innerWidth || pageY > innerHeight) {
-      return;
-    }
+    // if (pageX > innerWidth || pageY > innerHeight) {
+    //   return;
+    // }
 
     if (isPressed) {
       this.setState({
@@ -649,8 +649,10 @@ class Window extends React.Component<Props, State> {
                           className={styles.window}
                           key={cell.key}
                           style={{
-                            top: cell.style.top + top,
-                            left: cell.style.left + left,
+                            // top: cell.style.top + top,
+                            // left: cell.style.left + left,
+                            transform: `translate3d(${cell.style.left +
+                              left}px, ${cell.style.top + top}px, 0)`,
                             width: width - left,
                             height: height - top
                           }}

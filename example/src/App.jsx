@@ -8,12 +8,16 @@ import WindowSample from './WindowSample';
 export default class App extends Component {
   render() {
     return (
-      <div>
-        {/* <CarouselSample />
-        <CubeSample />
+      <div
+        style={{
+          height: 2000
+        }}
+      >
+        {/* <CarouselSample /> */}
+        {/* <CubeSample /> */}
         <DraggableListSample />
-        <StaggeredListSample /> */}
-        <WindowSample />
+        {/* <StaggeredListSample /> */}
+        {/* <WindowSample /> */}
       </div>
     );
   }
