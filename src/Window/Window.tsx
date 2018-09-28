@@ -299,7 +299,7 @@ class Window extends React.Component<Props, State> {
   handleMouseMove = (e: any) => {
     const { pageX, pageY } = e;
     const { wrapper } = this.state;
-    // const { innerWidth, innerHeight } = window;
+    const { scrollWidth, scrollHeight } = document.body;
     const {
       isPressed,
       mouseXY: [mx, my],
@@ -310,13 +310,13 @@ class Window extends React.Component<Props, State> {
       return;
     }
 
-    // if (pageX < 0 || pageY < 0) {
-    //   return;
-    // }
+    if (pageX < 0 || pageY < 0) {
+      return;
+    }
 
-    // if (pageX > innerWidth || pageY > innerHeight) {
-    //   return;
-    // }
+    if (pageX > scrollWidth || pageY > scrollHeight) {
+      return;
+    }
 
     if (isPressed) {
       this.setState({

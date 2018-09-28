@@ -61,6 +61,11 @@ class DraggableList extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    window.addEventListener('mousemove', this.handleMouseMove);
+    window.addEventListener('mouseup', this.handleMouseUp);
+  }
+
   handleMouseDown = (params: {
     key: number;
     pressLocation: [number, number];
@@ -102,6 +107,15 @@ class DraggableList extends React.Component<Props, State> {
       isPressed,
       mouseDelta: [dx, dy]
     } = this.state;
+    const { scrollWidth, scrollHeight } = document.body;
+
+    if (pageX < 0 || pageY < 0) {
+      return;
+    }
+
+    if (pageX > scrollWidth || pageY > scrollHeight) {
+      return;
+    }
 
     if (isPressed) {
       const mouseXY = [pageX - dx, pageY - dy];
@@ -195,12 +209,12 @@ class DraggableList extends React.Component<Props, State> {
                   onClickCapture={e => {
                     this.handleClick(e);
                   }}
-                  onMouseMove={e => {
-                    this.handleMouseMove(e);
-                  }}
-                  onMouseUp={() => {
-                    this.handleMouseUp();
-                  }}
+                  // onMouseMove={e => {
+                  //   this.handleMouseMove(e);
+                  // }}
+                  // onMouseUp={() => {
+                  //   this.handleMouseUp();
+                  // }}
                   style={{
                     position: 'absolute',
                     width,
