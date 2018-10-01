@@ -36,6 +36,12 @@ class Resizable extends React.Component<Props> {
     window.addEventListener('mouseup', resizableMouseUp);
   }
 
+  componentWillUnmount() {
+    const { resizableMouseMove, resizableMouseUp } = this.props;
+    window.removeEventListener('mousemove', resizableMouseMove);
+    window.removeEventListener('mouseup', resizableMouseUp);
+  }
+
   render() {
     const {
       width,

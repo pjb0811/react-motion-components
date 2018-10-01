@@ -128,12 +128,7 @@ class Window extends React.Component<Props, State> {
 
     window.addEventListener('mousemove', this.handleMouseMove);
     window.addEventListener('mouseup', this.handleMouseUp);
-    window.addEventListener(
-      'resize',
-      lodash.debounce(() => {
-        this.updateWrapperSize();
-      }, 100)
-    );
+    window.addEventListener('resize', this.debounceWrapperSize);
 
     this.setState(prevState => {
       return {
@@ -153,8 +148,14 @@ class Window extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.updateWrapperSize);
+    window.removeEventListener('mousemove', this.handleMouseMove);
+    window.removeEventListener('mouseup', this.handleMouseUp);
+    window.removeEventListener('resize', this.debounceWrapperSize);
   }
+
+  debounceWrapperSize = lodash.debounce(() => {
+    this.updateWrapperSize();
+  }, 100);
 
   updateWrapperSize = () => {
     const { wrapper } = this.state;

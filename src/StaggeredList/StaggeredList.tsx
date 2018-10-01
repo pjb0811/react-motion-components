@@ -52,6 +52,11 @@ class StaggeredList extends React.Component<Props, State> {
     window.addEventListener('mouseup', this.handleMouseUp);
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('mousemove', this.handleMouseMove);
+    window.removeEventListener('mouseup', this.handleMouseUp);
+  }
+
   getStyles = (
     prevStyles: Array<{ transformX: number; transformY: number }>
   ) => {

@@ -66,6 +66,11 @@ class DraggableList extends React.Component<Props, State> {
     window.addEventListener('mouseup', this.handleMouseUp);
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('mousemove', this.handleMouseMove);
+    window.removeEventListener('mouseup', this.handleMouseUp);
+  }
+
   handleMouseDown = (params: {
     key: number;
     pressLocation: [number, number];
