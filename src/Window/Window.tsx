@@ -655,10 +655,8 @@ class Window extends React.Component<Props, State> {
                           className={styles.window}
                           key={cell.key}
                           style={{
-                            // top: cell.style.top + top,
-                            // left: cell.style.left + left,
-                            transform: `translate3d(${cell.style.left +
-                              left}px, ${cell.style.top + top}px, 0)`,
+                            top: cell.style.top + top,
+                            left: cell.style.left + left,
                             width: width - left,
                             height: height - top
                           }}
