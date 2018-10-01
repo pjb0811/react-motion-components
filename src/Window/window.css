@@ -56,18 +56,22 @@
 
 .window-wrapper .resizable .ns {
   cursor: ns-resize;
+  z-index: 9999;
 }
 
 .window-wrapper .resizable .ew {
   cursor: ew-resize;
+  z-index: 9999;
 }
 
 .window-wrapper .resizable .nwse {
   cursor: nwse-resize;
+  z-index: 9999;
 }
 
 .window-wrapper .resizable .nesw {
   cursor: nesw-resize;
+  z-index: 9999;
 }
 
 .window-wrapper .titlebar {
