@@ -29,6 +29,8 @@ export default class App extends Component {
           ref={window => (this.window = window)}
           width={300}
           height={300}
+          minWidth={300}
+          minHeight={300}
           position="right"
           direction="left"
           titlebar={{

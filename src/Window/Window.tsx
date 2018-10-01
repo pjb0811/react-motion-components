@@ -9,6 +9,8 @@ const lodash = require('lodash');
 type Props = {
   width: number;
   height: number;
+  minWidth: number;
+  minHeight: number;
   position: string;
   direction: string;
   resize: boolean;
@@ -424,7 +426,8 @@ class Window extends React.Component<Props, State> {
   };
 
   resizableWindow = (_e: any) => {
-    const { resizable, wrapper, width, height } = this.state;
+    const { minWidth, minHeight } = this.props;
+    const { resizable, wrapper } = this.state;
     const {
       shiftXY,
       mouseXY,
@@ -446,46 +449,98 @@ class Window extends React.Component<Props, State> {
     switch (type) {
       case 'top':
         resizeTop = my - sy - dy;
+
+        if (minHeight > wrapper.height - (resizeTop - resizeBottom)) {
+          resizeTop = resizeBottom;
+        }
+
         break;
+
+      case 'leftTop':
+        resizeTop = my - sy - dy;
+        resizeLeft = mx - sx - dx;
+
+        if (minWidth > wrapper.width - (resizeLeft - resizeRight)) {
+          resizeLeft = resizeRight;
+        }
+
+        if (minHeight > wrapper.height - (resizeTop - resizeBottom)) {
+          resizeTop = resizeBottom;
+        }
+
+        break;
+
       case 'rightTop':
         resizeRight = mx - sx - dx + prevMoveX;
         resizeTop = my - sy - dy;
+
+        if (minWidth > wrapper.width - (resizeLeft - resizeRight)) {
+          resizeRight = resizeLeft;
+        }
+
+        if (minHeight > wrapper.height - (resizeTop - resizeBottom)) {
+          resizeTop = resizeBottom;
+        }
+
         break;
 
       case 'left':
         resizeLeft = mx - sx - dx;
+
+        if (minWidth > wrapper.width - (resizeLeft - resizeRight)) {
+          resizeLeft = resizeRight;
+        }
+
         break;
 
       case 'right':
         resizeRight = mx - sx - dx + prevMoveX;
+
+        if (minWidth > wrapper.width - (resizeLeft - resizeRight)) {
+          resizeRight = resizeLeft;
+        }
+
         break;
 
       case 'leftBottom':
         resizeLeft = mx - sx - dx;
         resizeBottom = my - sy - dy + prevMoveY;
+
+        if (minWidth > wrapper.width - (resizeLeft - resizeRight)) {
+          resizeLeft = resizeRight;
+        }
+
+        if (minHeight > wrapper.height - (resizeTop - resizeBottom)) {
+          resizeBottom = resizeTop;
+        }
+
         break;
 
       case 'bottom':
         resizeBottom = my - sy - dy + prevMoveY;
+
+        if (minHeight > wrapper.height - (resizeTop - resizeBottom)) {
+          resizeBottom = resizeTop;
+        }
+
         break;
 
       case 'rightBottom':
         resizeRight = mx - sx - dx + prevMoveX;
         resizeBottom = my - sy - dy + prevMoveY;
+
+        if (minWidth > wrapper.width - (resizeLeft - resizeRight)) {
+          resizeRight = resizeLeft;
+        }
+
+        if (minHeight > wrapper.height - (resizeTop - resizeBottom)) {
+          resizeBottom = resizeTop;
+        }
+
         break;
 
       default:
-        resizeTop = my - sy - dy;
-        resizeLeft = mx - sx - dx;
         break;
-    }
-
-    if (width > wrapper.width - (resizeLeft - resizeRight)) {
-      return;
-    }
-
-    if (height > wrapper.height - (resizeTop - resizeBottom)) {
-      return;
     }
 
     this.setState({
