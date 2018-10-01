@@ -15,9 +15,9 @@ export default class App extends Component {
       >
         {/* <CarouselSample /> */}
         {/* <CubeSample /> */}
-        <DraggableListSample />
+        {/* <DraggableListSample /> */}
         {/* <StaggeredListSample /> */}
-        {/* <WindowSample /> */}
+        <WindowSample />
       </div>
     );
   }

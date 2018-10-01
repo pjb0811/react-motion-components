@@ -392,15 +392,20 @@ class Window extends React.Component<Props, State> {
 
   resizableMouseMove = (e: any) => {
     const { pageX, pageY } = e;
-    const { resizable } = this.state;
+    const { wrapper, resizable } = this.state;
+    const { isFull } = wrapper;
     const { isPressed } = resizable;
-    const { innerWidth, innerHeight } = window;
+    const { scrollWidth, scrollHeight } = document.body;
+
+    if (isFull) {
+      return;
+    }
 
     if (pageX < 0 || pageY < 0) {
       return;
     }
 
-    if (pageX > innerWidth || pageY > innerHeight) {
+    if (pageX > scrollWidth || pageY > scrollHeight) {
       return;
     }
 
