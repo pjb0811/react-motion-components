@@ -52,6 +52,18 @@ type Cell = {
 };
 
 class Carousel extends React.Component<Props, State> {
+  static getDerivedStateFromProps(nextProps: Props) {
+    const { children } = nextProps;
+
+    const newChildren = Array.isArray(children) ? [...children] : [children];
+    const count = newChildren.length;
+
+    return {
+      count,
+      children: newChildren
+    };
+  }
+
   constructor(props: Props) {
     super(props);
 
@@ -497,7 +509,15 @@ class Carousel extends React.Component<Props, State> {
   };
 
   render() {
-    const { carousel, count, children, is2dEffect, width, height } = this.state;
+    const {
+      carousel,
+      count,
+      children,
+      is2dEffect,
+      width,
+      height,
+      cells
+    } = this.state;
 
     if (count < 2) {
       return (
@@ -539,7 +559,11 @@ class Carousel extends React.Component<Props, State> {
                 }}
               >
                 {children.map((child, key) => {
-                  const cell = this.state.cells[key];
+                  const cell = cells[key];
+
+                  if (!cells.length) {
+                    return null;
+                  }
 
                   return (
                     <Motion
