@@ -7,6 +7,7 @@ import styles from './window.css';
 const lodash = require('lodash');
 
 type Props = {
+  open: boolean;
   width: number;
   height: number;
   minWidth: number;
@@ -15,9 +16,11 @@ type Props = {
   direction: string;
   resize: boolean;
   titlebar: {};
+  onClose: () => void;
 };
 
 type State = {
+  open: boolean;
   width: number;
   height: number;
   wrapper: {
@@ -52,8 +55,104 @@ type State = {
   };
 };
 
+let wrapperContext: HTMLDivElement | any = {
+  offsetLeft: 0,
+  offsetTop: 0
+};
+
+const getPosition = (nextProps: Props) => {
+  const { width, height, position, direction } = nextProps;
+  const { innerHeight, innerWidth } = window;
+  const { offsetLeft, offsetTop } = wrapperContext;
+
+  const top =
+    direction === 'top'
+      ? innerHeight - offsetTop
+      : direction === 'bottom'
+        ? -offsetTop - height
+        : 0;
+
+  const left =
+    direction === 'left'
+      ? position.includes('left')
+        ? innerWidth
+        : position.includes('right')
+          ? width
+          : offsetLeft + width
+      : direction === 'right'
+        ? position.includes('left')
+          ? -width
+          : -offsetLeft - width
+        : 0;
+
+  return {
+    top,
+    left
+  };
+};
+
+const addWindow = (nextProps: Props, prevState: State) => {
+  return {
+    wrapper: {
+      ...prevState.wrapper,
+      show: true
+    },
+    cell: {
+      ...prevState.cell,
+      ...getPosition(nextProps)
+    },
+    cells: [
+      {
+        top: 0,
+        left: 0
+      }
+    ]
+  };
+};
+
+const removeWindow = (prevState: State) => {
+  const { width, height, wrapper, resizable } = prevState;
+
+  return {
+    wrapper: {
+      ...wrapper,
+      isFull: false,
+      width,
+      height
+    },
+    resizable: {
+      ...resizable,
+      position: {
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0
+      },
+      prevMoveX: 0,
+      prevMoveY: 0
+    },
+    cells: []
+  };
+};
+
 class Window extends React.Component<Props, State> {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    console.log(nextProps.open, prevState.open);
+    if (nextProps.open !== prevState.open) {
+      const state = nextProps.open
+        ? addWindow(nextProps, prevState)
+        : removeWindow(prevState);
+      return {
+        ...prevState,
+        ...state,
+        open: nextProps.open
+      };
+    }
+    return null;
+  }
+
   state = {
+    open: false,
     width: 0,
     height: 0,
     wrapper: {
@@ -92,41 +191,8 @@ class Window extends React.Component<Props, State> {
     }
   };
 
-  wrapperContext: HTMLDivElement | any;
-
-  getPosition = () => {
-    const { width, height, position, direction } = this.props;
-    const { innerHeight, innerWidth } = window;
-    const { offsetLeft, offsetTop } = this.wrapperContext;
-
-    const top =
-      direction === 'top'
-        ? innerHeight - offsetTop
-        : direction === 'bottom'
-          ? -offsetTop - height
-          : 0;
-
-    const left =
-      direction === 'left'
-        ? position.includes('left')
-          ? innerWidth
-          : position.includes('right')
-            ? width
-            : offsetLeft + width
-        : direction === 'right'
-          ? position.includes('left')
-            ? -width
-            : -offsetLeft - width
-          : 0;
-
-    return {
-      top,
-      left
-    };
-  };
-
   componentDidMount() {
-    const { width, height, titlebar } = this.props;
+    const { open, width, height, titlebar } = this.props;
 
     window.addEventListener('mousemove', this.handleMouseMove);
     window.addEventListener('mouseup', this.handleMouseUp);
@@ -134,6 +200,7 @@ class Window extends React.Component<Props, State> {
 
     this.setState(prevState => {
       return {
+        open,
         width,
         height,
         wrapper: {
@@ -183,25 +250,8 @@ class Window extends React.Component<Props, State> {
     return this.state.wrapper.isFull;
   };
 
-  addWindow = () => {
-    this.setState(prevState => {
-      return {
-        wrapper: {
-          ...prevState.wrapper,
-          show: true
-        },
-        cell: {
-          ...prevState.cell,
-          ...this.getPosition()
-        },
-        cells: [
-          {
-            top: 0,
-            left: 0
-          }
-        ]
-      };
-    });
+  removeWindow = () => {
+    this.setState(removeWindow(this.state));
   };
 
   toggleWindowSize = () => {
@@ -233,31 +283,6 @@ class Window extends React.Component<Props, State> {
     });
   };
 
-  removeWindow = () => {
-    const { width, height, wrapper, resizable } = this.state;
-
-    this.setState({
-      wrapper: {
-        ...wrapper,
-        isFull: false,
-        width,
-        height
-      },
-      resizable: {
-        ...resizable,
-        position: {
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0
-        },
-        prevMoveX: 0,
-        prevMoveY: 0
-      },
-      cells: []
-    });
-  };
-
   willEnter = () => {
     return { ...this.state.cell };
   };
@@ -272,14 +297,20 @@ class Window extends React.Component<Props, State> {
   };
 
   didLeave = () => {
-    this.setState(prevState => {
-      return {
-        wrapper: {
-          ...prevState.wrapper,
-          show: false
-        }
-      };
-    });
+    const { onClose } = this.props;
+    this.setState(
+      prevState => {
+        return {
+          wrapper: {
+            ...prevState.wrapper,
+            show: false
+          }
+        };
+      },
+      () => {
+        onClose();
+      }
+    );
   };
 
   handleMouseDown = (e: React.MouseEvent<any>) => {
@@ -666,7 +697,7 @@ class Window extends React.Component<Props, State> {
         {({ top, left, width, height, wrapperWidth, wrapperHeight }) => {
           return (
             <div
-              ref={context => (this.wrapperContext = context)}
+              ref={context => (wrapperContext = context)}
               className={`${styles.windowWrapper} ${styles[position]}`}
               style={{
                 width: wrapperWidth,

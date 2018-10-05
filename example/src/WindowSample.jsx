@@ -4,13 +4,19 @@ import 'semantic-ui-css/semantic.min.css';
 import { Window } from 'react-motion-components';
 
 export default class App extends Component {
+  state = {
+    isOpen: true
+  };
+
   render() {
     return (
       <div>
         <div>
           <button
             onClick={() => {
-              this.window.addWindow();
+              this.setState({
+                isOpen: true
+              });
             }}
           >
             add window
@@ -19,14 +25,15 @@ export default class App extends Component {
         <div>
           <button
             onClick={() => {
-              this.window.removeWindow();
+              this.setState({
+                isOpen: false
+              });
             }}
           >
             remove window
           </button>
         </div>
         <Window
-          ref={window => (this.window = window)}
           width={300}
           height={300}
           minWidth={300}
@@ -80,6 +87,12 @@ export default class App extends Component {
             }
           }}
           resize={true}
+          open={this.state.isOpen}
+          onClose={() => {
+            this.setState({
+              isOpen: false
+            });
+          }}
         >
           <Segment
             attached
