@@ -297,7 +297,7 @@ class Window extends React.Component<Props, State> {
   };
 
   didLeave = () => {
-    const { onClose } = this.props;
+    const { onClose = () => {} } = this.props;
     this.setState(
       prevState => {
         return {
