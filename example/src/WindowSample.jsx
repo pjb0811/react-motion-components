@@ -6,7 +6,7 @@ import { Window } from 'react-motion-components';
 export default class App extends Component {
   state = {
     window1: {
-      isOpen: false
+      isOpen: true
     },
     window2: {
       isOpen: false

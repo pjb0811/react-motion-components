@@ -689,8 +689,8 @@ class Window extends React.Component<Props, State> {
               ? wrapper.height
               : wrapper.height + resizable.position.bottom
           ),
-          wrapperWidth: spring(wrapper.width),
-          wrapperHeight: spring(wrapper.height)
+          wrapperWidth: spring(0),
+          wrapperHeight: spring(0)
         }}
       >
         {({ top, left, width, height, wrapperWidth, wrapperHeight }) => {
