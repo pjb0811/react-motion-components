@@ -5,32 +5,71 @@ import { Window } from 'react-motion-components';
 
 export default class App extends Component {
   state = {
-    isOpen: true
+    window1: {
+      isOpen: false
+    },
+    window2: {
+      isOpen: false
+    }
   };
 
   render() {
     return (
-      <div>
+      <div
+        style={{
+          textAlign: 'center'
+        }}
+      >
         <div>
           <button
             onClick={() => {
               this.setState({
-                isOpen: true
+                window1: {
+                  isOpen: true
+                }
               });
             }}
           >
-            add window
+            add window1
           </button>
         </div>
         <div>
           <button
             onClick={() => {
               this.setState({
-                isOpen: false
+                window1: {
+                  isOpen: false
+                }
               });
             }}
           >
-            remove window
+            remove window1
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              this.setState({
+                window2: {
+                  isOpen: true
+                }
+              });
+            }}
+          >
+            add window2
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={() => {
+              this.setState({
+                window2: {
+                  isOpen: false
+                }
+              });
+            }}
+          >
+            remove window2
           </button>
         </div>
         <Window
@@ -38,8 +77,8 @@ export default class App extends Component {
           height={300}
           minWidth={300}
           minHeight={300}
-          position="right"
-          direction="left"
+          position="top"
+          direction="top"
           titlebar={{
             use: true,
             height: 50,
@@ -87,10 +126,12 @@ export default class App extends Component {
             }
           }}
           resize={true}
-          open={this.state.isOpen}
+          open={this.state.window1.isOpen}
           onClose={() => {
             this.setState({
-              isOpen: false
+              window1: {
+                isOpen: false
+              }
             });
           }}
         >
@@ -102,9 +143,83 @@ export default class App extends Component {
               boxSizing: 'border-box'
             }}
           >
-            test
+            test1
           </Segment>
         </Window>
+        {/* <Window
+          width={500}
+          height={500}
+          minWidth={500}
+          minHeight={500}
+          position="right"
+          direction="left"
+          titlebar={{
+            use: true,
+            height: 50,
+            component: props => {
+              const {
+                width,
+                height,
+                toggleWindowSize,
+                handleMouseDown,
+                removeWindow,
+                isFulling
+              } = props;
+
+              return (
+                <Segment
+                  clearing
+                  attached="top"
+                  style={{
+                    width,
+                    height,
+                    boxSizing: 'border-box'
+                  }}
+                  onDoubleClick={toggleWindowSize}
+                  onMouseDown={handleMouseDown}
+                >
+                  <Header as="h4" floated="left">
+                    Test2
+                  </Header>
+                  <Header as="h4" floated="right">
+                    <Icon
+                      link
+                      color={`${isFulling ? 'green' : 'yellow'}`}
+                      name={`toggle ${isFulling ? 'on' : 'off'}`}
+                      onClick={toggleWindowSize}
+                    />
+                    <Icon
+                      link
+                      name="close"
+                      color="red"
+                      onClick={removeWindow}
+                    />
+                  </Header>
+                </Segment>
+              );
+            }
+          }}
+          resize={true}
+          open={this.state.window2.isOpen}
+          onClose={() => {
+            this.setState({
+              window2: {
+                isOpen: false
+              }
+            });
+          }}
+        >
+          <Segment
+            attached
+            style={{
+              width: '100%',
+              height: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
+            test2
+          </Segment>
+        </Window> */}
       </div>
     );
   }
