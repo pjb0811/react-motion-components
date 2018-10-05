@@ -137,7 +137,6 @@ const removeWindow = (prevState: State) => {
 
 class Window extends React.Component<Props, State> {
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    console.log(nextProps.open, prevState.open);
     if (nextProps.open !== prevState.open) {
       const state = nextProps.open
         ? addWindow(nextProps, prevState)
