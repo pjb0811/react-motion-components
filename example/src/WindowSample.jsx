@@ -10,7 +10,11 @@ export default class App extends Component {
 
   render() {
     return (
-      <div>
+      <div
+        style={{
+          textAlign: 'center'
+        }}
+      >
         <div>
           <button
             onClick={() => {
@@ -38,8 +42,8 @@ export default class App extends Component {
           height={300}
           minWidth={300}
           minHeight={300}
-          position="right"
-          direction="left"
+          position="top"
+          direction="bottom"
           titlebar={{
             use: true,
             height: 50,

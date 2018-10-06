@@ -7,7 +7,7 @@ type Props = {
   cells: Array<{ top: number; left: number }>;
   resize: boolean;
   resizable: {
-    type: string;
+    show: boolean;
     mouseXY: Array<number>;
     mouseDelta: Array<number>;
     isMoved: boolean;
@@ -52,12 +52,16 @@ class Resizable extends React.Component<Props> {
       resizableMouseDown,
       resizableDoubleClick
     } = this.props;
-    const { position } = resizable;
+    const { position, show } = resizable;
     const [cell = { top: 0, left: 0 }] = cells;
     const { top, left } = cell;
     const { size } = this.state;
 
     if (!resize) {
+      return null;
+    }
+
+    if (!show) {
       return null;
     }
 
