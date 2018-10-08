@@ -266,6 +266,13 @@ class Window extends React.Component<Props, State> {
   }
 
   debounceWrapperSize = lodash.debounce(() => {
+    const { wrapper } = this.state;
+    this.setState({
+      wrapper: {
+        ...wrapper,
+        ...this.getPosition({ isFull: wrapper.isFull })
+      }
+    });
     this.updateWrapperSize();
   }, 100);
 
