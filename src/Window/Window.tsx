@@ -62,49 +62,6 @@ type State = {
   };
 };
 
-const getPosition = (params: { props: Props; isFull: boolean }) => {
-  const { isFull, props } = params;
-  const { width, height, position } = props;
-  const { innerHeight, innerWidth } = window;
-  let top = 0;
-  let left = 0;
-
-  if (isFull) {
-    return {
-      top,
-      left
-    };
-  }
-
-  switch (position) {
-    case 'top':
-      left = innerWidth / 2 - width / 2;
-      break;
-
-    case 'left':
-      top = innerHeight / 2 - height / 2;
-      break;
-
-    case 'right':
-      top = innerHeight / 2 - height / 2;
-      left = innerWidth - width;
-      break;
-
-    case 'bottom':
-      top = innerHeight - height;
-      left = innerWidth / 2 - width / 2;
-      break;
-
-    default:
-      break;
-  }
-
-  return {
-    top,
-    left
-  };
-};
-
 const getDirection = (nextProps: Props) => {
   const { width, height, position, direction } = nextProps;
   const { innerHeight, innerWidth } = window;
@@ -237,7 +194,7 @@ class Window extends React.Component<Props, State> {
       width: 0,
       height: 0,
       wrapper: {
-        ...getPosition({ props: this.props, isFull: false }),
+        ...this.getPosition({ isFull: false }),
         isFull: false,
         show: false,
         width: 0,
@@ -326,6 +283,49 @@ class Window extends React.Component<Props, State> {
     }
   };
 
+  getPosition = (params: { isFull: boolean }) => {
+    const { isFull } = params;
+    const { width, height, position } = this.props;
+    const { innerHeight, innerWidth } = window;
+    let top = 0;
+    let left = 0;
+
+    if (isFull) {
+      return {
+        top,
+        left
+      };
+    }
+
+    switch (position) {
+      case 'top':
+        left = innerWidth / 2 - width / 2;
+        break;
+
+      case 'left':
+        top = innerHeight / 2 - height / 2;
+        break;
+
+      case 'right':
+        top = innerHeight / 2 - height / 2;
+        left = innerWidth - width;
+        break;
+
+      case 'bottom':
+        top = innerHeight - height;
+        left = innerWidth / 2 - width / 2;
+        break;
+
+      default:
+        break;
+    }
+
+    return {
+      top,
+      left
+    };
+  };
+
   isShowing = () => {
     return this.state.wrapper.show;
   };
@@ -346,7 +346,7 @@ class Window extends React.Component<Props, State> {
     this.setState({
       wrapper: {
         ...wrapper,
-        ...getPosition({ props: this.props, isFull: !wrapper.isFull }),
+        ...this.getPosition({ isFull: !wrapper.isFull }),
         isFull: !wrapper.isFull,
         width: wrapper.isFull ? width : innerWidth,
         height: wrapper.isFull ? height : innerHeight
@@ -775,8 +775,8 @@ class Window extends React.Component<Props, State> {
               ? wrapper.height
               : wrapper.height + resizable.position.bottom
           ),
-          wrapperWidth: spring(0),
-          wrapperHeight: spring(0)
+          wrapperTop: spring(wrapper.top),
+          wrapperLeft: spring(wrapper.left)
         }}
       >
         {({ top, left, width, height, wrapperTop, wrapperLeft }) => {
