@@ -24,6 +24,8 @@ type State = {
   width: number;
   height: number;
   wrapper: {
+    top: number;
+    left: number;
     isFull: boolean;
     show: boolean;
     width: number;
@@ -36,6 +38,8 @@ type State = {
   cell: {
     top: number;
     left: number;
+    prevTop: number;
+    prevLeft: number;
   };
   cells: Array<{ top: number; left: number }>;
   titlebar: {
@@ -45,6 +49,7 @@ type State = {
     height: number;
   };
   resizable: {
+    show: boolean;
     type: string;
     mouseXY: Array<number>;
     mouseDelta: Array<number>;
@@ -52,38 +57,108 @@ type State = {
     isPressed: boolean;
     shiftXY: Array<number>;
     position: { top: number; left: number; right: number; bottom: number };
+    prevMoveX: number;
+    prevMoveY: number;
   };
 };
 
-let wrapperContext: HTMLDivElement | any = {
-  offsetLeft: 0,
-  offsetTop: 0
+const getPosition = (params: { props: Props; isFull: boolean }) => {
+  const { isFull, props } = params;
+  const { width, height, position } = props;
+  const { innerHeight, innerWidth } = window;
+  let top = 0;
+  let left = 0;
+
+  if (isFull) {
+    return {
+      top,
+      left
+    };
+  }
+
+  switch (position) {
+    case 'top':
+      left = innerWidth / 2 - width / 2;
+      break;
+
+    case 'left':
+      top = innerHeight / 2 - height / 2;
+      break;
+
+    case 'right':
+      top = innerHeight / 2 - height / 2;
+      left = innerWidth - width;
+      break;
+
+    case 'bottom':
+      top = innerHeight - height;
+      left = innerWidth / 2 - width / 2;
+      break;
+
+    default:
+      break;
+  }
+
+  return {
+    top,
+    left
+  };
 };
 
-const getPosition = (nextProps: Props) => {
+const getDirection = (nextProps: Props) => {
   const { width, height, position, direction } = nextProps;
   const { innerHeight, innerWidth } = window;
-  const { offsetLeft, offsetTop } = wrapperContext;
+  let top = 0;
+  let left = 0;
 
-  const top =
-    direction === 'top'
-      ? innerHeight - offsetTop
-      : direction === 'bottom'
-        ? -offsetTop - height
-        : 0;
-
-  const left =
-    direction === 'left'
-      ? position.includes('left')
-        ? innerWidth
-        : position.includes('right')
-          ? width
-          : offsetLeft + width
-      : direction === 'right'
-        ? position.includes('left')
-          ? -width
-          : -offsetLeft - width
-        : 0;
+  switch (direction) {
+    case 'top':
+      if (position.includes('top')) {
+        top = innerHeight;
+      }
+      if (position.includes('left') || position.includes('right')) {
+        top = innerHeight / 2 + height / 2;
+      }
+      if (position.includes('bottom')) {
+        top = height;
+      }
+      break;
+    case 'left':
+      if (position.includes('top') || position.includes('bottom')) {
+        left = innerWidth / 2 + width / 2;
+      }
+      if (position.includes('left')) {
+        left = innerWidth;
+      }
+      if (position.includes('right')) {
+        left = width;
+      }
+      break;
+    case 'right':
+      if (position.includes('top') || position.includes('bottom')) {
+        left = -(innerWidth / 2 + width / 2);
+      }
+      if (position.includes('left')) {
+        left = -width;
+      }
+      if (position.includes('right')) {
+        left = -innerWidth;
+      }
+      break;
+    case 'bottom':
+      if (position.includes('top')) {
+        top = -height;
+      }
+      if (position.includes('left') || position.includes('right')) {
+        top = -(innerHeight / 2 + height / 2);
+      }
+      if (position.includes('bottom')) {
+        top = -innerHeight;
+      }
+      break;
+    default:
+      break;
+  }
 
   return {
     top,
@@ -99,7 +174,11 @@ const addWindow = (nextProps: Props, prevState: State) => {
     },
     cell: {
       ...prevState.cell,
-      ...getPosition(nextProps)
+      ...getDirection(nextProps)
+    },
+    resizable: {
+      ...prevState.resizable,
+      show: true
     },
     cells: [
       {
@@ -122,6 +201,7 @@ const removeWindow = (prevState: State) => {
     },
     resizable: {
       ...resizable,
+      show: false,
       position: {
         top: 0,
         left: 0,
@@ -150,45 +230,50 @@ class Window extends React.Component<Props, State> {
     return null;
   }
 
-  state = {
-    open: false,
-    width: 0,
-    height: 0,
-    wrapper: {
-      isFull: false,
-      show: false,
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      open: false,
       width: 0,
       height: 0,
-      isMoved: false,
-      isPressed: false,
-      mouseXY: [0, 0],
-      mouseDelta: [0, 0]
-    },
-    cell: {
-      top: 0,
-      left: 0,
-      prevTop: 0,
-      prevLeft: 0
-    },
-    cells: [],
-    titlebar: {
-      use: false,
-      title: '',
-      component: null,
-      height: 30
-    },
-    resizable: {
-      type: 'top',
-      isMoved: false,
-      isPressed: false,
-      mouseXY: [0, 0],
-      mouseDelta: [0, 0],
-      shiftXY: [0, 0],
-      position: { top: 0, left: 0, right: 0, bottom: 0 },
-      prevMoveX: 0,
-      prevMoveY: 0
-    }
-  };
+      wrapper: {
+        ...getPosition({ props: this.props, isFull: false }),
+        isFull: false,
+        show: false,
+        width: 0,
+        height: 0,
+        isMoved: false,
+        isPressed: false,
+        mouseXY: [0, 0],
+        mouseDelta: [0, 0]
+      },
+      cell: {
+        top: 0,
+        left: 0,
+        prevTop: 0,
+        prevLeft: 0
+      },
+      cells: [],
+      titlebar: {
+        use: false,
+        title: '',
+        component: null,
+        height: 30
+      },
+      resizable: {
+        show: false,
+        type: 'top',
+        isMoved: false,
+        isPressed: false,
+        mouseXY: [0, 0],
+        mouseDelta: [0, 0],
+        shiftXY: [0, 0],
+        position: { top: 0, left: 0, right: 0, bottom: 0 },
+        prevMoveX: 0,
+        prevMoveY: 0
+      }
+    };
+  }
 
   componentDidMount() {
     const { open, width, height, titlebar } = this.props;
@@ -261,6 +346,7 @@ class Window extends React.Component<Props, State> {
     this.setState({
       wrapper: {
         ...wrapper,
+        ...getPosition({ props: this.props, isFull: !wrapper.isFull }),
         isFull: !wrapper.isFull,
         width: wrapper.isFull ? width : innerWidth,
         height: wrapper.isFull ? height : innerHeight
@@ -652,7 +738,7 @@ class Window extends React.Component<Props, State> {
   };
 
   render() {
-    const { position, children, resize = false } = this.props;
+    const { children, resize = false } = this.props;
     const { titlebar, wrapper, resizable } = this.state;
     const resizeCells = this.state.cells.map(
       (cell: { top: number; left: number }) => {
@@ -693,14 +779,13 @@ class Window extends React.Component<Props, State> {
           wrapperHeight: spring(0)
         }}
       >
-        {({ top, left, width, height, wrapperWidth, wrapperHeight }) => {
+        {({ top, left, width, height, wrapperTop, wrapperLeft }) => {
           return (
             <div
-              ref={context => (wrapperContext = context)}
-              className={`${styles.windowWrapper} ${styles[position]}`}
+              className={`${styles.windowWrapper}`}
               style={{
-                width: wrapperWidth,
-                height: wrapperHeight,
+                top: wrapperTop,
+                left: wrapperLeft,
                 visibility: wrapper.show ? 'visible' : 'hidden'
               }}
             >
@@ -737,8 +822,8 @@ class Window extends React.Component<Props, State> {
                     {cells.map(cell => {
                       return (
                         <div
-                          className={styles.window}
                           key={cell.key}
+                          className={styles.window}
                           style={{
                             top: cell.style.top + top,
                             left: cell.style.left + left,
