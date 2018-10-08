@@ -194,7 +194,8 @@ class Window extends React.Component<Props, State> {
       width: 0,
       height: 0,
       wrapper: {
-        ...this.getPosition({ isFull: false }),
+        top: 0,
+        left: 0,
         isFull: false,
         show: false,
         width: 0,
@@ -246,6 +247,7 @@ class Window extends React.Component<Props, State> {
         height,
         wrapper: {
           ...prevState.wrapper,
+          ...this.getPosition({ isFull: false }),
           width,
           height
         },
