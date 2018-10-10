@@ -198,29 +198,43 @@ import 'semantic-ui-css/semantic.min.css';
 import { Window } from 'react-motion-components';
 
 class App extends Component {
+  state = {
+    window1: {
+      isOpen: true
+    }
+  };
+
   render() {
     return (
-      <div>
+      <div
+        style={{
+          textAlign: 'center'
+        }}
+      >
         <div>
           <button
             onClick={() => {
               this.setState({
-                isOpen: true
+                window1: {
+                  isOpen: true
+                }
               });
             }}
           >
-            add window
+            add window1
           </button>
         </div>
         <div>
           <button
             onClick={() => {
               this.setState({
-                isOpen: false
+                window1: {
+                  isOpen: false
+                }
               });
             }}
           >
-            remove window
+            remove window1
           </button>
         </div>
         <Window
@@ -228,8 +242,8 @@ class App extends Component {
           height={300}
           minWidth={300}
           minHeight={300}
-          position="right"
-          direction="left"
+          position="top"
+          direction="top"
           titlebar={{
             use: true,
             height: 50,
@@ -277,10 +291,12 @@ class App extends Component {
             }
           }}
           resize={true}
-          open={this.state.isOpen}
+          open={this.state.window1.isOpen}
           onClose={() => {
             this.setState({
-              isOpen: false
+              window1: {
+                isOpen: false
+              }
             });
           }}
         >
@@ -292,7 +308,7 @@ class App extends Component {
               boxSizing: 'border-box'
             }}
           >
-            test
+            test1
           </Segment>
         </Window>
       </div>
