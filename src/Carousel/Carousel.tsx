@@ -9,7 +9,7 @@ type Props = {
   direction: string;
   effect: string;
   children: React.ReactNode;
-  onClick: () => {};
+  onClick: () => void;
 };
 
 type State = {
@@ -51,14 +51,168 @@ type Cell = {
   zIndex: number;
 };
 
-class Carousel extends React.Component<Props, State> {
-  static getDerivedStateFromProps(nextProps: Props) {
-    const { children } = nextProps;
+const moveCell = (params: { nextIndex: number; prevState: State }) => {
+  const { nextIndex, prevState } = params;
+  const { cells, isHorizontal, width, height, count } = prevState;
+  const range = Math.ceil(count / 2);
 
+  let newCells: Array<Cell> & any = cells.concat();
+
+  newCells = newCells.map(
+    (cell: { translate: { x: number; y: number } }, i: number) => {
+      let position = i - nextIndex;
+      position =
+        Math.abs(position) >= range
+          ? position > 0
+            ? position - count
+            : count + position
+          : position;
+      let x = isHorizontal ? width * position : 0;
+      let y = isHorizontal ? 0 : height * position;
+      let opacity = position >= -1 && position <= 1 ? 1 : 0;
+      let zIndex = position >= -1 && position <= 1 ? 100 : 1;
+
+      return {
+        ...cell,
+        translate: {
+          x,
+          y,
+          z: 0
+        },
+        opacity,
+        zIndex
+      };
+    }
+  );
+
+  return {
+    cells: newCells
+  };
+};
+
+const moveCellAway = (params: { nextIndex: number; prevState: State }) => {
+  const { nextIndex, prevState } = params;
+  const {
+    cells,
+    width,
+    height,
+    isHorizontal,
+    is2dEffect,
+    radius,
+    theta
+  } = prevState;
+
+  const newCells = cells.concat();
+
+  return {
+    cells: newCells.map((_, i: number) => {
+      const idx = i === nextIndex ? 0 : i - nextIndex;
+      const x = isHorizontal ? idx * width : 0;
+      const y = isHorizontal ? 0 : idx * height;
+      const zIndex = i === nextIndex ? 100 : 1;
+
+      return {
+        translate: {
+          x: is2dEffect ? x : 0,
+          y: is2dEffect ? y : 0,
+          z: is2dEffect ? 0 : radius
+        },
+        rotate: {
+          x: is2dEffect ? 0 : isHorizontal ? 0 : 1,
+          y: is2dEffect ? 0 : isHorizontal ? 1 : 0,
+          z: 0,
+          deg: theta * i
+        },
+        opacity: 1,
+        zIndex
+      };
+    })
+  };
+};
+
+const moveCarousel = (params: { nextIndex: number; prevState: State }) => {
+  const { nextIndex, prevState } = params;
+  const { theta, isHorizontal } = prevState;
+  const angle = theta * nextIndex * (isHorizontal ? -1 : 1);
+
+  return {
+    carousel: {
+      ...prevState.carousel,
+      rotate: {
+        ...prevState.carousel.rotate,
+        deg: angle
+      }
+    }
+  };
+};
+
+const getDirection = (params: {
+  nextIndex: number;
+  prevIndex: number;
+  count: number;
+}) => {
+  const { nextIndex, prevIndex, count } = params;
+  const distance = Math.abs(nextIndex - prevIndex);
+
+  if (distance > 1 && distance < count - 1) {
+    return 'move';
+  }
+
+  if (nextIndex === count - 1 && prevIndex === 0) {
+    return 'prev';
+  }
+
+  if (nextIndex === 0 && prevIndex === count - 1) {
+    return 'next';
+  }
+
+  if (nextIndex > prevIndex) {
+    return 'next';
+  }
+
+  return 'prev';
+};
+
+const getNextIndex = (params: {
+  index: number;
+  count: number;
+  is2dEffect: boolean;
+}) => {
+  const { index, count, is2dEffect } = params;
+  if (is2dEffect) {
+    return index < 0 ? 0 : index === count ? count - 1 : index;
+  }
+  return index;
+};
+
+class Carousel extends React.Component<Props, State> {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    const { children, index } = nextProps;
+    const { is2dEffect } = prevState;
     const newChildren = Array.isArray(children) ? [...children] : [children];
     const count = newChildren.length;
+    const nextIndex = getNextIndex({ index, count, is2dEffect });
+    const direction = getDirection({
+      nextIndex,
+      prevIndex: prevState.index,
+      count
+    });
+    const cells = is2dEffect
+      ? direction === 'move'
+        ? moveCellAway({ nextIndex, prevState })
+        : moveCell({ nextIndex, prevState })
+      : {};
+    const carousel = is2dEffect ? {} : moveCarousel({ nextIndex, prevState });
+
+    if (nextIndex === prevState.index) {
+      return null;
+    }
 
     return {
+      ...cells,
+      ...carousel,
+      index: nextIndex,
+      index3d: nextIndex,
       count,
       children: newChildren
     };
@@ -117,6 +271,7 @@ class Carousel extends React.Component<Props, State> {
     const theta = 360 / count;
     const cellSize = isHorizontal ? width : height;
     const radius = Math.round(cellSize / 2 / Math.tan(Math.PI / count));
+    const range = Math.ceil(count / 2);
 
     this.setState({
       index,
@@ -142,19 +297,17 @@ class Carousel extends React.Component<Props, State> {
         }
       },
       cells: newChildren.map((_, i: number) => {
-        let idx = i === index ? 0 : i - index;
-        let x, y;
-
-        x = isHorizontal ? idx * width : 0;
-        y = isHorizontal ? 0 : idx * height;
-
-        if (Math.abs(x) === width * (count - 1)) {
-          x = -width;
-        }
-
-        if (Math.abs(y) === height * (count - 1)) {
-          y = -height;
-        }
+        let position = i - index;
+        position =
+          Math.abs(position) >= range
+            ? position > 0
+              ? position - count
+              : count + position
+            : position;
+        let x = isHorizontal ? width * position : 0;
+        let y = isHorizontal ? 0 : height * position;
+        let opacity = position >= -1 && position <= 1 ? 1 : 0;
+        let zIndex = position >= -1 && position <= 1 ? 100 : 1;
 
         return {
           translate: {
@@ -168,31 +321,13 @@ class Carousel extends React.Component<Props, State> {
             z: 0,
             deg: theta * i
           },
-          opacity: 1,
-          zIndex: 1
+          opacity,
+          zIndex
         };
       }),
       children: newChildren
     });
   }
-
-  prev = () => {
-    const { is2dEffect } = this.state;
-    if (is2dEffect) {
-      this.changeCell({ target: 'prev' });
-    } else {
-      this.changeCarousel({ target: 'prev' });
-    }
-  };
-
-  next = () => {
-    const { is2dEffect } = this.state;
-    if (is2dEffect) {
-      this.changeCell({ target: 'next' });
-    } else {
-      this.changeCarousel({ target: 'next' });
-    }
-  };
 
   move = (params: { index: number; index3d: number }) => {
     const { index, index3d } = params;
@@ -256,10 +391,6 @@ class Carousel extends React.Component<Props, State> {
       : index === count - 1
         ? 0
         : index + 1;
-  };
-
-  getIndex = () => {
-    return this.state.index;
   };
 
   dragCell = () => {
@@ -592,6 +723,7 @@ class Carousel extends React.Component<Props, State> {
                               height,
                               zIndex: cell.zIndex
                             }}
+                            /*
                             onMouseDown={e => {
                               this.handleMouseDown(e);
                             }}
@@ -607,6 +739,7 @@ class Carousel extends React.Component<Props, State> {
                             onMouseUp={() => {
                               this.handleMouseUp();
                             }}
+                            */
                           >
                             {child}
                           </div>
