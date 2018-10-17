@@ -568,26 +568,46 @@ class Carousel extends React.Component<Props, State> {
 
   handleMouseUp = () => {
     const {
+      isPressed,
       index,
-      index3d,
+      // index3d,
       cells,
       count,
-      isPressed,
       width,
       height,
-      is2dEffect,
-      isHorizontal,
-      carousel,
-      theta
+      // is2dEffect,
+      isHorizontal
+      // carousel,
+      // theta
     } = this.state;
 
     if (isPressed) {
+      const cell = cells[index];
+      const distance = isHorizontal
+        ? cell.translate.x % width
+        : cell.translate.y % height;
+
       this.setState({
         isPressed: false,
         mouseXY: [0, 0],
-        mouseDelta: [0, 0]
+        mouseDelta: [0, 0],
+        distance
       });
 
+      if ((isHorizontal ? width : height) / 2 < Math.abs(distance)) {
+        let nextIndex = index + (distance < 0 ? -1 : 1);
+        nextIndex =
+          nextIndex < 0 ? count - 1 : nextIndex === count ? 0 : nextIndex;
+
+        console.log(nextIndex);
+        // const cells = is2dEffect ? moveCell({ nextIndex, prevState: }) : {}
+
+        this.setState({
+          distance
+        });
+      }
+
+      /*
       if (is2dEffect) {
         cells.map((cell: { translate: { x: number; y: number } }, i) => {
           if (index === i) {
@@ -635,7 +655,7 @@ class Carousel extends React.Component<Props, State> {
         } else {
           this.move({ index, index3d });
         }
-      }
+      } */
     }
   };
 
@@ -723,7 +743,6 @@ class Carousel extends React.Component<Props, State> {
                               height,
                               zIndex: cell.zIndex
                             }}
-                            /*
                             onMouseDown={e => {
                               this.handleMouseDown(e);
                             }}
@@ -739,7 +758,6 @@ class Carousel extends React.Component<Props, State> {
                             onMouseUp={() => {
                               this.handleMouseUp();
                             }}
-                            */
                           >
                             {child}
                           </div>

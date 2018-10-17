@@ -73,6 +73,7 @@ class CarouselSample extends Component {
             direction={'horizontal'}
             effect={this.state.effect}
             index={this.state.index}
+            onClick={() => {}}
           >
             {Array.from({ length: this.state.size }, (x, i) => {
               return (
