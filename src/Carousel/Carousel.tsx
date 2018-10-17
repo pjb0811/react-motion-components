@@ -575,7 +575,7 @@ class Carousel extends React.Component<Props, State> {
       count,
       width,
       height,
-      // is2dEffect,
+      is2dEffect,
       isHorizontal
       // carousel,
       // theta
@@ -586,24 +586,29 @@ class Carousel extends React.Component<Props, State> {
       const distance = isHorizontal
         ? cell.translate.x % width
         : cell.translate.y % height;
+      let nextIndex = index + (distance < 0 ? 1 : -1);
+      nextIndex =
+        nextIndex < 0 ? count - 1 : nextIndex === count ? 0 : nextIndex;
 
       this.setState({
         isPressed: false,
         mouseXY: [0, 0],
         mouseDelta: [0, 0],
-        distance
+        distance,
+        index: nextIndex
       });
+      console.log(nextIndex);
 
       if ((isHorizontal ? width : height) / 2 < Math.abs(distance)) {
-        let nextIndex = index + (distance < 0 ? -1 : 1);
-        nextIndex =
-          nextIndex < 0 ? count - 1 : nextIndex === count ? 0 : nextIndex;
-
-        console.log(nextIndex);
-        // const cells = is2dEffect ? moveCell({ nextIndex, prevState: }) : {}
+        // let nextIndex = index + (distance < 0 ? 1 : -1);
+        // nextIndex =
+        //   nextIndex < 0 ? count - 1 : nextIndex === count ? 0 : nextIndex;
+        const cells = is2dEffect
+          ? moveCell({ nextIndex, prevState: this.state })
+          : {};
 
         this.setState({
-          distance
+          ...cells
         });
       }
 
