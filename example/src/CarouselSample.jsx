@@ -5,7 +5,7 @@ class CarouselSample extends Component {
   state = {
     index: 0,
     size: 5,
-    effect: '2d',
+    effect: '3d',
     colors: ['green', 'red', 'blue', 'yellow', 'black']
   };
 
@@ -74,6 +74,9 @@ class CarouselSample extends Component {
             effect={this.state.effect}
             index={this.state.index}
             onClick={() => {}}
+            onChange={index => {
+              this.move(index);
+            }}
           >
             {Array.from({ length: this.state.size }, (x, i) => {
               return (

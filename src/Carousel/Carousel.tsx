@@ -10,6 +10,7 @@ type Props = {
   effect: string;
   children: React.ReactNode;
   onClick: () => void;
+  onChange?: (index: number) => void;
 };
 
 type State = {
@@ -321,77 +322,13 @@ class Carousel extends React.Component<Props, State> {
             z: 0,
             deg: theta * i
           },
-          opacity,
-          zIndex
+          opacity: is2dEffect ? opacity : 1,
+          zIndex: is2dEffect ? zIndex : 1
         };
       }),
       children: newChildren
     });
   }
-
-  move = (params: { index: number; index3d: number }) => {
-    const { index, index3d } = params;
-    const {
-      cells,
-      width,
-      height,
-      isHorizontal,
-      is2dEffect,
-      radius,
-      theta,
-      carousel
-    } = this.state;
-
-    const newCells = cells.concat();
-    const angle = theta * index3d * (isHorizontal ? -1 : 1);
-
-    this.setState({
-      index,
-      index3d,
-      carousel: {
-        ...carousel,
-        rotate: {
-          ...carousel.rotate,
-          deg: angle
-        }
-      },
-      cells: newCells.map((_, i: number) => {
-        const idx = i === index ? 0 : i - index;
-        const x = isHorizontal ? idx * width : 0;
-        const y = isHorizontal ? 0 : idx * height;
-        const zIndex = i === index ? 100 : 1;
-
-        return {
-          translate: {
-            x: is2dEffect ? x : 0,
-            y: is2dEffect ? y : 0,
-            z: is2dEffect ? 0 : radius
-          },
-          rotate: {
-            x: is2dEffect ? 0 : isHorizontal ? 0 : 1,
-            y: is2dEffect ? 0 : isHorizontal ? 1 : 0,
-            z: 0,
-            deg: theta * i
-          },
-          opacity: 1,
-          zIndex
-        };
-      })
-    });
-  };
-
-  getMoveIndex = (params: { target: string }) => {
-    const { target } = params;
-    const { index, count } = this.state;
-    const isPrev = target === 'prev';
-    return isPrev
-      ? index
-        ? index - 1
-        : count - 1
-      : index === count - 1
-        ? 0
-        : index + 1;
-  };
 
   dragCell = () => {
     const {
@@ -429,64 +366,16 @@ class Carousel extends React.Component<Props, State> {
       };
     });
 
-    this.setState(() => {
-      return {
-        cells: newCells
-      };
-    });
-  };
-
-  changeCell = (params: { target: string }) => {
-    const { target } = params;
-    const { index, cells, isHorizontal, width, height, count } = this.state;
-    const isPrev = target === 'prev';
-    const moveIndex = this.getMoveIndex({ target });
-
-    let newCells: Array<Cell> & any = cells.concat();
-
-    newCells = newCells.map(
-      (cell: { translate: { x: number; y: number } }, i: number) => {
-        let x = isHorizontal ? cell.translate.x + (isPrev ? width : -width) : 0;
-        let y = isHorizontal
-          ? 0
-          : cell.translate.y + (isPrev ? height : -height);
-        let opacity = i === index || i === moveIndex ? 1 : 0;
-        let zIndex = i === index ? 100 : 1;
-
-        if (Math.abs(x) === width * (count - 1)) {
-          x = isPrev ? -width : width;
-        }
-
-        if (Math.abs(y) === height * (count - 1)) {
-          y = isPrev ? -height : height;
-        }
-
-        return {
-          ...cell,
-          translate: {
-            x,
-            y,
-            z: 0
-          },
-          opacity,
-          zIndex
-        };
-      }
-    );
-
-    this.setState(() => {
-      return {
-        index: moveIndex,
-        cells: newCells
-      };
-    });
+    return {
+      cells: newCells
+    };
   };
 
   dragCarousel = () => {
     const { carousel, isHorizontal, mouseDelta } = this.state;
     const [dx, dy] = mouseDelta;
 
-    this.setState({
+    return {
       carousel: {
         ...carousel,
         rotate: {
@@ -494,29 +383,7 @@ class Carousel extends React.Component<Props, State> {
           deg: carousel.rotate.deg + (isHorizontal ? dx : dy)
         }
       }
-    });
-  };
-
-  changeCarousel = (params: { target: string }) => {
-    const { target } = params;
-    const { index3d, theta, isHorizontal } = this.state;
-    const isPrev = target === 'prev';
-    const moveIndex = isPrev ? index3d - 1 : index3d + 1;
-    const angle = theta * moveIndex * (isHorizontal ? -1 : 1);
-
-    this.setState(prevState => {
-      return {
-        index: this.getMoveIndex({ target }),
-        index3d: moveIndex,
-        carousel: {
-          ...prevState.carousel,
-          rotate: {
-            ...prevState.carousel.rotate,
-            deg: angle
-          }
-        }
-      };
-    });
+    };
   };
 
   handleMouseDown = (e: React.MouseEvent<any>) => {
@@ -550,19 +417,22 @@ class Carousel extends React.Component<Props, State> {
       mouseXY: [mx, my],
       is2dEffect
     } = this.state;
+    const { onChange } = this.props;
+
+    if (!onChange) {
+      return;
+    }
 
     if (isPressed) {
+      const cells = is2dEffect ? this.dragCell() : {};
+      const carousel = is2dEffect ? {} : this.dragCarousel();
       this.setState({
+        ...cells,
+        ...carousel,
         mouseXY: [pageX, pageY],
         mouseDelta: [pageX - mx, pageY - my],
         isMoved: true
       });
-
-      if (is2dEffect) {
-        this.dragCell();
-      } else {
-        this.dragCarousel();
-      }
     }
   };
 
@@ -570,97 +440,69 @@ class Carousel extends React.Component<Props, State> {
     const {
       isPressed,
       index,
-      // index3d,
       cells,
       count,
       width,
       height,
       is2dEffect,
-      isHorizontal
-      // carousel,
-      // theta
+      isHorizontal,
+      carousel,
+      theta
     } = this.state;
+    const { onChange } = this.props;
+
+    if (!onChange) {
+      return;
+    }
 
     if (isPressed) {
-      const cell = cells[index];
-      const distance = isHorizontal
-        ? cell.translate.x % width
-        : cell.translate.y % height;
-      let nextIndex = index + (distance < 0 ? 1 : -1);
-      nextIndex =
-        nextIndex < 0 ? count - 1 : nextIndex === count ? 0 : nextIndex;
+      let distance = 0;
+      let nextIndex = index;
+      let newCells = {};
+      let newCarousel = {};
+      let hasChanged = false;
+
+      if (is2dEffect) {
+        const cell = cells[index];
+        distance = isHorizontal
+          ? cell.translate.x % width
+          : cell.translate.y % height;
+        hasChanged = (isHorizontal ? width : height) / 2 < Math.abs(distance);
+      } else {
+        const { deg } = carousel.rotate;
+        distance =
+          nextIndex === 0
+            ? deg % theta
+            : Math.abs(deg) > Math.abs(theta * nextIndex)
+              ? deg % theta
+              : (theta * nextIndex) % deg;
+        hasChanged = theta / count < Math.abs(distance);
+      }
+
+      if (hasChanged) {
+        nextIndex = index + (distance < 0 ? 1 : -1);
+        if (is2dEffect) {
+          nextIndex =
+            nextIndex < 0 ? count - 1 : nextIndex === count ? 0 : nextIndex;
+        }
+        onChange(nextIndex);
+      } else {
+        newCells = is2dEffect
+          ? moveCell({ nextIndex, prevState: this.state })
+          : {};
+        newCarousel = is2dEffect
+          ? {}
+          : moveCarousel({ nextIndex, prevState: this.state });
+      }
 
       this.setState({
+        ...newCells,
+        ...newCarousel,
         isPressed: false,
         mouseXY: [0, 0],
         mouseDelta: [0, 0],
-        distance,
-        index: nextIndex
+        distance
       });
-      console.log(nextIndex);
-
-      if ((isHorizontal ? width : height) / 2 < Math.abs(distance)) {
-        // let nextIndex = index + (distance < 0 ? 1 : -1);
-        // nextIndex =
-        //   nextIndex < 0 ? count - 1 : nextIndex === count ? 0 : nextIndex;
-        const cells = is2dEffect
-          ? moveCell({ nextIndex, prevState: this.state })
-          : {};
-
-        this.setState({
-          ...cells
-        });
-      }
-
-      /*
-      if (is2dEffect) {
-        cells.map((cell: { translate: { x: number; y: number } }, i) => {
-          if (index === i) {
-            const distance = isHorizontal
-              ? cell.translate.x % width
-              : cell.translate.y % height;
-
-            this.setState({
-              distance
-            });
-
-            if ((isHorizontal ? width : height) / 2 < Math.abs(distance)) {
-              const moveIndex =
-                distance > 0
-                  ? index - 1 < 0
-                    ? count - 1
-                    : index - 1
-                  : index + 1 === count
-                    ? 0
-                    : index + 1;
-              this.move({ index: moveIndex, index3d });
-            } else {
-              this.move({ index, index3d });
-            }
-          }
-
-          return cell;
-        });
-      } else {
-        const { deg } = carousel.rotate;
-        const distance =
-          index3d === 0
-            ? deg % theta
-            : Math.abs(deg) > Math.abs(theta * index3d)
-              ? deg % theta
-              : (theta * index3d) % deg;
-
-        this.setState({
-          distance
-        });
-
-        if (theta / count < Math.abs(distance)) {
-          const target = distance > 0 ? 'prev' : 'next';
-          this.changeCarousel({ target });
-        } else {
-          this.move({ index, index3d });
-        }
-      } */
     }
   };
 
