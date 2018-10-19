@@ -21,10 +21,39 @@ import React, { Component } from 'react';
 import { Carousel } from 'react-motion-components';
 
 export default class CarouselSample extends Component {
+  state = {
+    index: 0,
+    size: 5,
+    effect: '3d',
+    colors: ['green', 'red', 'blue', 'yellow', 'black']
+  };
+
+  prev = () => {
+    const { index, size, effect } = this.state;
+    this.setState({
+      index: effect === '2d' ? (index > 0 ? index - 1 : size - 1) : index - 1
+    });
+  };
+
+  next = () => {
+    const { index, size, effect } = this.state;
+    this.setState({
+      index: effect === '2d' ? (index < size - 1 ? index + 1 : 0) : index + 1
+    });
+  };
+
+  move = index => {
+    this.setState({
+      index
+    });
+  };
+
   render() {
     const defaultStyle = {
       width: 300,
-      height: 300
+      height: 300,
+      margin: '0 auto',
+      overflow: 'hidden'
     };
 
     const itemStyle = {
@@ -38,34 +67,50 @@ export default class CarouselSample extends Component {
 
     return (
       <div>
-        <h1 style={{ textAlign: 'center' }}>1. Carousel</h1>
+        <h1>Carousel</h1>
+        <button onClick={this.prev}>prev</button>
+        <button onClick={this.next}>next</button>
+        {Array.from({ length: this.state.size }, (x, i) => {
+          return (
+            <button
+              key={i}
+              onClick={() => {
+                this.move(i);
+              }}
+            >
+              move {i}
+            </button>
+          );
+        })}
         <div
           style={{
-            ...defaultStyle,
-            margin: '0 auto'
+            ...defaultStyle
           }}
         >
           <Carousel
             {...defaultStyle}
-            ref={carousel => (this.carousel = carousel)}
             direction={'horizontal'}
-            effect={'3d'}
-            index={0}
+            effect={this.state.effect}
+            index={this.state.index}
+            onClick={() => {}}
+            onChange={index => {
+              this.move(index);
+            }}
           >
-            <div style={{ ...defaultStyle, ...itemStyle, background: 'green' }}>
-              1
-            </div>
-            <div style={{ ...defaultStyle, ...itemStyle, background: 'red' }}>
-              2
-            </div>
-            <div style={{ ...defaultStyle, ...itemStyle, background: 'blue' }}>
-              3
-            </div>
-            <div
-              style={{ ...defaultStyle, ...itemStyle, background: 'yellow' }}
-            >
-              4
-            </div>
+            {Array.from({ length: this.state.size }, (x, i) => {
+              return (
+                <div
+                  key={i}
+                  style={{
+                    ...defaultStyle,
+                    ...itemStyle,
+                    background: this.state.colors[i]
+                  }}
+                >
+                  {i}
+                </div>
+              );
+            })}
           </Carousel>
         </div>
       </div>
