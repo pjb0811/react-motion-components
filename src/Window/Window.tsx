@@ -73,7 +73,11 @@ const getDirection = (nextProps: Props) => {
       if (position.includes('top')) {
         top = innerHeight;
       }
-      if (position.includes('left') || position.includes('right')) {
+      if (
+        position.includes('left') ||
+        position.includes('right') ||
+        position.includes('center')
+      ) {
         top = innerHeight / 2 + height / 2;
       }
       if (position.includes('bottom')) {
@@ -81,7 +85,11 @@ const getDirection = (nextProps: Props) => {
       }
       break;
     case 'left':
-      if (position.includes('top') || position.includes('bottom')) {
+      if (
+        position.includes('top') ||
+        position.includes('bottom') ||
+        position.includes('center')
+      ) {
         left = innerWidth / 2 + width / 2;
       }
       if (position.includes('left')) {
@@ -92,7 +100,11 @@ const getDirection = (nextProps: Props) => {
       }
       break;
     case 'right':
-      if (position.includes('top') || position.includes('bottom')) {
+      if (
+        position.includes('top') ||
+        position.includes('bottom') ||
+        position.includes('center')
+      ) {
         left = -(innerWidth / 2 + width / 2);
       }
       if (position.includes('left')) {
@@ -106,7 +118,11 @@ const getDirection = (nextProps: Props) => {
       if (position.includes('top')) {
         top = -height;
       }
-      if (position.includes('left') || position.includes('right')) {
+      if (
+        position.includes('left') ||
+        position.includes('right') ||
+        position.includes('center')
+      ) {
         top = -(innerHeight / 2 + height / 2);
       }
       if (position.includes('bottom')) {
@@ -307,6 +323,11 @@ class Window extends React.Component<Props, State> {
     }
 
     switch (position) {
+      case 'center':
+        top = innerHeight / 2 - height / 2;
+        left = innerWidth / 2 - width / 2;
+        break;
+
       case 'top':
         left = innerWidth / 2 - width / 2;
         break;

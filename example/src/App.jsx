@@ -13,11 +13,11 @@ export default class App extends Component {
           height: 2000
         }}
       >
-        <CarouselSample />
+        {/* <CarouselSample /> */}
         {/* <CubeSample /> */}
         {/* <DraggableListSample /> */}
         {/* <StaggeredListSample /> */}
-        {/* <WindowSample /> */}
+        <WindowSample />
       </div>
     );
   }
