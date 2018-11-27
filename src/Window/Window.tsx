@@ -572,7 +572,8 @@ class Window extends React.Component<Props, State> {
   };
 
   resizableWindow = (_e: any) => {
-    const { minWidth, minHeight } = this.props;
+    const { width, height } = this.props;
+    const { minWidth = width, minHeight = height } = this.props;
     const { resizable, wrapper } = this.state;
     const {
       shiftXY,

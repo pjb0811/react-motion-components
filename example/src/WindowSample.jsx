@@ -49,8 +49,6 @@ export default class App extends Component {
         <Window
           width={300}
           height={300}
-          minWidth={300}
-          minHeight={300}
           position="center"
           direction="bottom"
           titlebar={{
