@@ -10,8 +10,8 @@ type Props = {
   open: boolean;
   width: number;
   height: number;
-  minWidth: number;
-  minHeight: number;
+  minWidth?: number;
+  minHeight?: number;
   position: string;
   direction: string;
   resize: boolean;
