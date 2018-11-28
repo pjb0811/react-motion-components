@@ -12,6 +12,7 @@ type Props = {
   height: number;
   minWidth?: number;
   minHeight?: number;
+  zIndex?: number;
   position: string;
   direction: string;
   resize: boolean;
@@ -769,7 +770,7 @@ class Window extends React.Component<Props, State> {
   };
 
   render() {
-    const { children, resize = false } = this.props;
+    const { children, resize = false, zIndex = 999 } = this.props;
     const { titlebar, wrapper, resizable } = this.state;
     const resizeCells = this.state.cells.map(
       (cell: { top: number; left: number }) => {
@@ -817,7 +818,8 @@ class Window extends React.Component<Props, State> {
               style={{
                 top: wrapperTop,
                 left: wrapperLeft,
-                visibility: wrapper.show ? 'visible' : 'hidden'
+                visibility: wrapper.show ? 'visible' : 'hidden',
+                zIndex
               }}
             >
               <Resizable
