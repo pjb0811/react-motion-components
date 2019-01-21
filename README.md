@@ -16,7 +16,7 @@ npm install --save react-motion-components
 
 [demo](https://codesandbox.io/s/x7jv6oj8lo)
 
-```tsx
+```jsx
 import React, { Component } from 'react';
 import { Carousel } from 'react-motion-components';
 
@@ -123,7 +123,7 @@ export default class CarouselSample extends Component {
 
 [demo](https://codesandbox.io/s/x3l8xzv0w4)
 
-```tsx
+```jsx
 import React, { Component } from 'react';
 import { Cube } from 'react-motion-components';
 
@@ -154,7 +154,7 @@ class App extends Component {
 
 [demo](https://codesandbox.io/s/4z4vlorp87)
 
-```tsx
+```jsx
 import React, { Component } from 'react';
 import { DraggableList } from 'react-motion-components';
 
@@ -201,7 +201,7 @@ class App extends Component {
 
 [demo](https://codesandbox.io/s/myzz5qx1jj)
 
-```tsx
+```jsx
 import React, { Component } from 'react';
 import { StaggeredList } from 'react-motion-components';
 
@@ -236,7 +236,7 @@ class App extends Component {
 
 [demo](https://codesandbox.io/s/jv3nyzl8nw)
 
-```tsx
+```jsx
 import React, { Component } from 'react';
 import { Header, Segment, Icon } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
