@@ -6,7 +6,8 @@ class CarouselSample extends Component {
     index: 0,
     size: 5,
     effect: '3d',
-    colors: ['green', 'red', 'blue', 'yellow', 'black']
+    colors: ['green', 'red', 'blue', 'yellow', 'black'],
+    direction: 'vertical'
   };
 
   prev = () => {
@@ -33,8 +34,8 @@ class CarouselSample extends Component {
     const defaultStyle = {
       width: 300,
       height: 300,
-      margin: '0 auto',
-      overflow: 'hidden'
+      margin: '50px auto'
+      // overflow: 'hidden'
     };
 
     const itemStyle = {
@@ -43,7 +44,8 @@ class CarouselSample extends Component {
       alignItems: 'center',
       fontSize: 30,
       fontWeight: 'bold',
-      color: 'white'
+      color: 'white',
+      margin: '0 auto'
     };
 
     return (
@@ -70,7 +72,7 @@ class CarouselSample extends Component {
         >
           <Carousel
             {...defaultStyle}
-            direction={'horizontal'}
+            direction={this.state.direction}
             effect={this.state.effect}
             index={this.state.index}
             onClick={() => {}}

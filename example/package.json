@@ -18,6 +18,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "react-motion": "^0.5.2",
     "semantic-ui-css": "^2.3.3",
     "semantic-ui-react": "^0.82.5"
   }

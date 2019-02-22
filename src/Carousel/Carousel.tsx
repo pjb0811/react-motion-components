@@ -320,7 +320,7 @@ class Carousel extends React.Component<Props, State> {
             x: is2dEffect ? 0 : isHorizontal ? 0 : 1,
             y: is2dEffect ? 0 : isHorizontal ? 1 : 0,
             z: 0,
-            deg: theta * i
+            deg: theta * (isHorizontal ? i : -i)
           },
           opacity: is2dEffect ? opacity : 1,
           zIndex: is2dEffect ? zIndex : 1
@@ -380,7 +380,7 @@ class Carousel extends React.Component<Props, State> {
         ...carousel,
         rotate: {
           ...carousel.rotate,
-          deg: carousel.rotate.deg + (isHorizontal ? dx : dy)
+          deg: carousel.rotate.deg + (isHorizontal ? dx : -dy)
         }
       }
     };
@@ -470,17 +470,13 @@ class Carousel extends React.Component<Props, State> {
         hasChanged = (isHorizontal ? width : height) / 2 < Math.abs(distance);
       } else {
         const { deg } = carousel.rotate;
-        distance =
-          nextIndex === 0
-            ? deg % theta
-            : Math.abs(deg) > Math.abs(theta * nextIndex)
-              ? deg % theta
-              : (theta * nextIndex) % deg;
-        hasChanged = theta / count < Math.abs(distance);
+        distance = theta * index + (isHorizontal ? deg : -deg);
+        hasChanged = Math.abs(distance) > theta / 2;
       }
 
       if (hasChanged) {
         nextIndex = index + (distance < 0 ? 1 : -1);
+
         if (is2dEffect) {
           nextIndex =
             nextIndex < 0 ? count - 1 : nextIndex === count ? 0 : nextIndex;
